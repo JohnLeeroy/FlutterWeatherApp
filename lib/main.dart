@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 void main() => runApp(MyApp());
 
@@ -46,6 +47,18 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
+  static const platform = const MethodChannel("com.wayfair.flutter/android");
+
+  void printAndroidOutput() async {
+    String value;
+    try {
+      value = await platform.invokeMethod("printAndroidOutput");
+    } catch (e) {
+      print(e);
+    }
+    print(value);
+  }
+
   void _incrementCounter() {
     setState(() {
       // This call to setState tells the Flutter framework that something has
@@ -53,6 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
       // so that the display can reflect the updated values. If we changed
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
+      printAndroidOutput();
       _counter++;
     });
   }
