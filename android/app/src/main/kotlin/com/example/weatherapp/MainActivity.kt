@@ -22,6 +22,8 @@ class MainActivity : FlutterActivity() {
     private val CHANNEL = "com.wayfair.flutter/android"
     private val controller = CurrentWeatherResponseController()
 
+    private val GET_LOCATION_REQUEST_CODE = 54321
+
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         GeneratedPluginRegistrant.registerWith(flutterEngine)
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -55,19 +57,18 @@ class MainActivity : FlutterActivity() {
     }
 
     private fun requestLocationPermissions() {
-        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION), 1)
+        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION), GET_LOCATION_REQUEST_CODE)
     }
 
     private fun requestLocation(): Location {
-        val location = locationManager
-                .getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-        Log.d(TAG, "onLocationChanged ${location.latitude} ${location.longitude}")
+        val location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+        Log.d(TAG, "requestLocation Result ${location.latitude} ${location.longitude}")
         return location
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (requestCode == GET_LOCATION_REQUEST_CODE && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             requestLocation()
         }
     }

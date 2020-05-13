@@ -291,7 +291,6 @@ class _MyHomePageState extends State<MyHomePage> {
       temperature = currentWeatherDataPODO.main.temp.toString();
       humidity = currentWeatherDataPODO.main.humidity.toString();
       pressure = currentWeatherDataPODO.main.pressure.toString();
-
     } catch (e) {
       print(e);
     }

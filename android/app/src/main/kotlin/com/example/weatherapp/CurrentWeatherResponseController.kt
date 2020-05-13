@@ -29,14 +29,14 @@ class CurrentWeatherResponseController(): Callback<CurrentWeatherResponse> {
     val apiRequests = retrofit.create(ApiRequests::class.java)
 
     fun getWeather(city: String, result : MethodChannel.Result)  {
-        apiCall(city!!)
+        apiCall(city)
         response?.subscribe {
             result.success(gson.toJson(it))
         }
     }
 
     private fun apiCall(location: String?) {
-        Log.d("", "apiCall Location $location")
+        Log.d(TAG, "Weather apiCall start with Location $location")
         location?.let {
             val call: Call<CurrentWeatherResponse> = apiRequests.getCurrentWeatherData(it)
             call.enqueue(this)
@@ -44,7 +44,7 @@ class CurrentWeatherResponseController(): Callback<CurrentWeatherResponse> {
     }
 
     override fun onFailure(call: Call<CurrentWeatherResponse>, t: Throwable) {
-        Log.e("failure", t.toString())
+        Log.e("TAG", t.message)
     }
 
     override fun onResponse(call: Call<CurrentWeatherResponse>, response: Response<CurrentWeatherResponse>) {
@@ -56,5 +56,9 @@ class CurrentWeatherResponseController(): Callback<CurrentWeatherResponse> {
                 it.onError(e)
             }
         }
+    }
+
+    companion object {
+        const val TAG = "WeatherController"
     }
 }
