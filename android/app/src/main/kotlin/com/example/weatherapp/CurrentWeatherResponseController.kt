@@ -14,42 +14,29 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.Exception
 
 
-class CurrentWeatherResponseController(private var flutterEngine: FlutterEngine): Callback<CurrentWeatherResponse> {
+class CurrentWeatherResponseController(): Callback<CurrentWeatherResponse> {
 
-
-    private val CHANNEL = "com.wayfair.flutter/android"
     private val BASE_URL = "http://api.openweathermap.org/"
 
     private var response: Observable<CurrentWeatherResponse>? = null
+    val gson = GsonBuilder()
+            .setLenient()
+            .create()
+    val retrofit: Retrofit = Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .build()
+    val apiRequests = retrofit.create(ApiRequests::class.java)
 
-    init {
-        start()
-    }
-
-    private fun start() {
-        MethodChannel(flutterEngine.dartExecutor, CHANNEL).setMethodCallHandler { methodCall, result ->
-            if (methodCall.method == "printAndroidOutput") {
-                apiCall(methodCall.argument("location"))
-                response?.subscribe {
-                    result.success(Gson().toJson(it))
-                }
-            }
+    fun getWeather(city: String, result : MethodChannel.Result)  {
+        apiCall(city!!)
+        response?.subscribe {
+            result.success(gson.toJson(it))
         }
     }
 
     private fun apiCall(location: String?) {
-
-        val gson = GsonBuilder()
-            .setLenient()
-            .create()
-
-        val retrofit: Retrofit = Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .build()
-
-        val apiRequests = retrofit.create(ApiRequests::class.java)
-
+        Log.d("", "apiCall Location $location")
         location?.let {
             val call: Call<CurrentWeatherResponse> = apiRequests.getCurrentWeatherData(it)
             call.enqueue(this)

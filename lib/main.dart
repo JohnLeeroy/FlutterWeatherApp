@@ -284,12 +284,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void printAndroidOutput() async {
     try {
-      String currentWeatherData = await platform.invokeMethod("printAndroidOutput", {'location': 'Boston'});
+      String city = await platform.invokeMethod("getLocation");
+      String currentWeatherData = await platform.invokeMethod("fetchCurrentWeather", {'location': city});
       CurrentWeatherDataPODO currentWeatherDataPODO =  CurrentWeatherDataPODO.fromJson(jsonDecode(currentWeatherData));
       location = currentWeatherDataPODO.name;
       temperature = currentWeatherDataPODO.main.temp.toString();
       humidity = currentWeatherDataPODO.main.humidity.toString();
       pressure = currentWeatherDataPODO.main.pressure.toString();
+
     } catch (e) {
       print(e);
     }
